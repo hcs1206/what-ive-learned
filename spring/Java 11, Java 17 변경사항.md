@@ -152,6 +152,7 @@ Record Data Class란, JDK 14 버전부터 공개된 Immutable 객체를 생성�
 - Immutable 객체이기 때문에 모든 값은 생성자를 통해 설정되어야 합니다.
 - DTO와 같은 Data Object 용도로 활용 시 보다 편리하고 간결하게 구분할 수 있습니다.
 - Record Class는 상속이 불가능합니다. (모든 필드는 “private final ,,”로 선언이 되기에,,)
+- Record Class에 validation 및 MapStruct 라이브러리 모두 이용할 수 있다
 
 **예제1. record, class 선언 비교**
 ```java
@@ -203,5 +204,33 @@ record Rational(int num, int denom) {
 		num /= gcd;
 		denom /= gcd;
 	}
+}
+```
+
+예제3. Validation, Swagger, MapStruct 적용
+- record class도 Validation, Swagger, MapStruct 모두 적용 가능하다
+```java
+// Validation, Swagger 적용 
+public record BookDto(
+        @Schema(description = "제목")
+        @NotNull
+        String title,
+        @Schema(description = "작가")
+        @NotNull
+        String author,
+        @Schema(description = "고유번호")
+        @NotNull
+        String isbn,
+        @Schema(description = "출판사")
+        @NotNull
+        String publisher
+) {
+}
+
+// MapStruct 적용
+@Mapper(componentModel = "spring")
+public interface BookMapper {
+    @Mapping(source = "isbn", target = "id")
+    Book toEntity(BookDto source);
 }
 ```
